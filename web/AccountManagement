@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        .balance{
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .transaction-form{
+            width: 300px;
+            height: 100px;
+            padding: 10px;
+            margin: 10px 0px;
+            border: 3px solid gray;
+        }
+    </style>
+    <h1>계좌 관리 시스템</h1>
+    <div class='balance'>계좌잔액: <span id="displayBalance">0</span>원</div>
+    <div class='transaction-form'>
+        <h3>입금</h3>
+        <input type="text" id="depositAmount" placeholder="입금액을 입력하세요...">
+        <button onclick="handleDeposit()">입금하기</button> 
+    </div>
+    
+    <div class="transaction-form">
+        <h3>출금</h3>
+        <input type="text" id="withdrawAmount" placeholder="출금액을 입력하세요...">
+        <button onclick="handleWithdraw()">출금하기</button> 
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        let account = {
+            owner : "황기태",
+            code : "111",
+            balance : 570000,
+            
+            //잔금조회
+            inquiry : function() {return this.balance;},
+            
+            //저금
+            deposit : function(money) {this.balance += money;},
+            
+            //예금
+            withdraw : function (money) {
+                if(this.balance >= money){
+                    this.balance -= money;
+                    return true;
+                } 
+                else{
+                    alert("잔액 부족");
+                    return false;
+                }
+            }
+        }
+
+        function updateBalanceDisplay(){
+            document.getElementById('displayBalance').textContent = account.inquiry().toLocaleString();        
+        }
+        updateBalanceDisplay();
+
+        function showMessage(msg, isError = false){
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.color = isError ? 'red' : 'green';
+            messageDiv.textContent = msg;
+
+            setTimeout( () => { messageDiv.textContent = '';}, 4000);
+        }
+
+
+        function handleDeposit(){
+            const input = document.getElementById('depositAmount');
+            const amount = parseInt(input.value);
+
+            if(amount <= 0 || isNaN(amount)){
+                alert("Error amount. please input correctly...")
+                showMessage("제대로 된 입금액을 입력해주세요.", true);
+                return;
+            }
+            
+            account.deposit(amount);
+            updateBalanceDisplay();
+            input.value = '';
+        }
+        function handleWithdraw(){
+            const input = document.getElementById('withdrawAmount');
+            const amount = parseInt(input.value);
+
+            if(amount <= 0 || isNaN(amount)){
+                alert("Error amount. please input correctly...")
+                showMessage("제대로 된 출금액을 입력해주세요.", true);
+                return;
+            }
+            account.withdraw(amount);
+            updateBalanceDisplay();
+            input.value = '';
+        }
+
+    </script>
+</body>
+</html>
